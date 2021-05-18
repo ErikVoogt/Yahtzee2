@@ -12,10 +12,10 @@ public class Yahtzee {
 }
 
  class YahtzeeSpel {
-
-     int aantalDobbelstenen = 5;
+     ArrayList<Speler> spelers = new ArrayList();
      static ArrayList<Dobbelsteen> dobbelstenen = new ArrayList();
      int[] blokkeren = {0, 0, 0, 0, 0};
+     boolean spelen = true;
 
 
      public YahtzeeSpel() {
@@ -28,40 +28,61 @@ public class Yahtzee {
 
      void spelen() {
          System.out.println("Welkom bij Yahtzee");
-         System.out.println("Deze versie is geschikt voor 2 spelers");
+         System.out.println("Deze versie is geschikt voor  2 spelers");
          System.out.println("Voer de namen van de spelers in.");
-         boolean doorspelen = true;
-         Scanner invoer = new Scanner(System.in);
-         while (doorspelen) {
-             System.out.println("Druk op s om te spelen of op q om te stoppen");
-             String keuze = invoer.nextLine();
-             if (keuze.equals("s")) {
+         naamToevoegen();
+
                  //System.out.println("Je hebt op enter gedrukt");
-                 for (int z = 0; z < 5; z++) {
-                     if (blokkeren[z] == 0) {
-                         dobbelstenen.get(z).werpen();
+                 while (spelen) {
+                     for (Speler i : spelers) {
+                         Scanner invoer = new Scanner(System.in);
+                         System.out.println("Druk op s om te spelen of op q om te stoppen");
+                         String keuze = invoer.nextLine();
+                         if (keuze.equals("s")) {
+                             for (int z = 0; z < 5; z++) {
+                                 if (blokkeren[z] == 0) {
+                                     dobbelstenen.get(z).werpen();
+                                 }
+                             }
+                         System.out.println(i + " gooit.");
+                             printHand();
+                             vastHouden();
+                             System.out.println(i + "'s tweede worp");
+                             doorGaan();
+                             vastHouden();
+                             System.out.println(i +"'s laatste worp");
+                             doorGaan();
+                             System.out.println("\nJe beurt is voorbij je hebt:");
+                             Worp.worpUitslag();
+                             i.aantalbeurten--;
+                             if (i.aantalbeurten == 0){
+                                 spelen = false;
+                                 break;
+                             }
+                         } else if (keuze.equals("q")) {
+                             System.out.println("Het spel is klaar");
+                         } else {
+                             System.out.println("Kies opnieuw");
+                         }
+
                      }
+
+
                  }
-                 printHand();
-                 vastHouden();
-                 System.out.println("Je tweede worp");
-                 doorGaan();
-                 vastHouden();
-                 System.out.println("Je laatste worp");
-                 doorGaan();
-                 System.out.println("\nJe beurt is voorbij je hebt:");
-                 Worp.worpUitslag();
-                 Speler speler = new Speler();
-                 System.out.println(speler.worpGeschiedenis);
 
 
-             } else if (keuze.equals("q")) {
-                 doorspelen = false;
-                 System.out.println("Het spel is klaar");
-             } else {
-                 System.out.println("Kies opnieuw");
-             }
+     }
+
+     void naamToevoegen(){
+         Scanner deelnemer = new Scanner(System.in);
+         String naam;
+         for(int x = 0; x < 2; x++){
+             naam = deelnemer.nextLine();
+             spelers.add(new Speler(naam));
+
          }
+         System.out.println();
+
      }
 
      void printHand(){
@@ -103,7 +124,11 @@ public class Yahtzee {
 
          }
 
-     }
+
+
+         }
+
+
 
      class Dobbelsteen {
 
@@ -126,8 +151,8 @@ public class Yahtzee {
                  worp.worpen[n] = YahtzeeSpel.dobbelstenen.get(n).laatsteWorp;
 
              }
-             Speler speler = new Speler();
-             speler.worpGeschiedenis.add(worp);
+             //Speler speler = new Speler();
+             //speler.worpGeschiedenis.add(worp);
              return worp;
          }
 
@@ -136,11 +161,18 @@ public class Yahtzee {
      class Speler {
 
          ArrayList<Worp> worpGeschiedenis = new ArrayList();
+         int aantalbeurten = 13;
+         String naam;
 
-         public Speler() {
-
+         public Speler(String naam) {
+             this.naam = naam;
          }
 
+         @Override
+         public String toString() {
+             return naam;
+
+         }
      }
 
 
